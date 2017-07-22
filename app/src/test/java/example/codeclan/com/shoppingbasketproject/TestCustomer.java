@@ -30,7 +30,7 @@ public class TestCustomer
     public void testAddLoyaltyCard()
     {
         LoyaltyCard loyaltyCard = new LoyaltyCard();
-        customer.addLoyaltyCard(loyaltyCard);
+        customer.setLoyaltyCard(loyaltyCard);
         assertEquals(loyaltyCard, customer.getLoyaltyCard());
     }
 
@@ -38,7 +38,7 @@ public class TestCustomer
     public void testAddBasket()
     {
         Basket basket = new Basket();
-        customer.addBasket(basket);
+        customer.setBasket(basket);
         assertEquals(basket, customer.getBasket());
     }
 }
