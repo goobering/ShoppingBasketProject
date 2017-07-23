@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
 
 public class TestBasket
 {
-    private Basket basket;
-    private Customer customer;
-
     // All currency values use a fairly naive integer/pennies model:
     // 1 integer unit = 1 penny
+
+    private Basket basket;
+    private Customer customer;
 
     @Before
     public void before()
@@ -32,9 +32,17 @@ public class TestBasket
         assertEquals("Basket", basket.getClass().getSimpleName());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddNullItemThrowsException()
+    {
+        basket.addItem(null);
+    }
+
+
     @Test
     public void testAddItemToBasket()
     {
+        assertEquals(0, basket.getNumItems());
         Item item = new Item();
         basket.addItem(item);
         assertEquals(1, basket.getNumItems());
@@ -51,8 +59,9 @@ public class TestBasket
     }
 
     @Test
-    public void testEmptyBasket()
+    public void testEmptyBasketRemovesItems()
     {
+        // Add 10 identical empty items
         for(int i = 0; i < 10; i++)
         {
             Item item = new Item();
@@ -65,61 +74,38 @@ public class TestBasket
     }
 
     @Test
-    public void testBuyOneGetOneFreeThreeItems()
+    public void testGetTotalValue()
     {
-        // Add 3 identical £1 items to the basket
-        for(int i = 0; i < 3; i++)
+        assertEquals(0, basket.getTotalValue());
+
+        // Add 10 unique items with prices increasing at 100 penny intervals
+        for(int i = 0; i < 10; i++)
         {
-            Item item = new Item("testItem", 100);
+            Item item = new Item("testItem" + Integer.toString(i), (i + 1) * 100);
             basket.addItem(item);
         }
 
-        assertEquals(200, basket.getDiscountedValue());
+        assertEquals(5500, basket.getTotalValue());
     }
 
     @Test
-    public void testBuyOneGetOneFreeManyItems()
+    public void testEmptyBasketSetsTotalValueZero()
     {
-        // Add 300000 identical £1 items to the basket
-        for(int i = 0; i < 300000; i++)
+        // Add 10 unique items with prices increasing at 100 penny intervals
+        for(int i = 0; i < 10; i++)
         {
-            Item item = new Item("testItem", 100);
+            Item item = new Item("testItem" + Integer.toString(i), (i + 1) * 100);
             basket.addItem(item);
         }
 
-        // Discount here reflects both the 'buy one get one free' discount and the '10% off over £20' discount
-        assertEquals(180000, basket.getDiscountedValue());
+        assertEquals(5500, basket.getTotalValue());
+        basket.empty();
+        assertEquals(0, basket.getTotalValue());
     }
 
     @Test
-    public void testTenPercentOffTwentyPoundTotal()
+    public void testGetCustomer()
     {
-        // Add 20 unique £1 items to the basket
-        for(int i = 0; i < 20; i++)
-        {
-            Item item = new Item("testItem" + Integer.toString(i), 100);
-            basket.addItem(item);
-        }
-
-        assertEquals(1800, basket.getDiscountedValue());
-    }
-
-    @Test
-    public void testLoyaltyCardDiscount()
-    {
-        // Add 100 unique £1 items to the basket
-        for(int i = 0; i < 100; i ++)
-        {
-            Item item = new Item("testItem" + Integer.toString(i), 100);
-            basket.addItem(item);
-        }
-
-        // Default Customer has no loyalty card
-        // 10% off total > £20 has been applied
-        assertEquals(9000, basket.getDiscountedValue());
-
-        // Add loyalty card to customer and re-test
-        customer.setLoyaltyCard(new LoyaltyCard());
-        assertEquals(8820, basket.getDiscountedValue());
+        assertEquals(customer, basket.getCustomer());
     }
 }

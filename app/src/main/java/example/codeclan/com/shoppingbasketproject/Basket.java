@@ -1,23 +1,64 @@
 package example.codeclan.com.shoppingbasketproject;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 /**
  * Created by user on 22/07/2017.
  */
 
-public class Basket
+public class Basket extends Observable
 {
-    private ArrayList<Item> items;
+    private Customer customer;
+    private ArrayList<Item> items = new ArrayList<Item>();
 
     public Basket()
     {
-        items = new ArrayList<Item>();
+    }
+
+    public Customer getCustomer()
+    {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer)
+    {
+        if(this.customer == customer)
+        {
+            return;
+        }
+
+        this.customer = customer;
+        setChanged();
+        notifyObservers();
+    }
+
+    public ArrayList<Item> getItems()
+    {
+        return items;
     }
 
     public void addItem(Item item)
     {
+        if(item == null)
+        {
+            throw new IllegalArgumentException("Cannot add a null Item to Basket.");
+        }
+
         items.add(item);
+        setChanged();
+        notifyObservers();
+    }
+
+    public boolean removeItem(Item item)
+    {
+        boolean changeMade = items.remove(item);
+        if(changeMade)
+        {
+            setChanged();
+            notifyObservers();
+        }
+        return changeMade;
     }
 
     public int getNumItems()
@@ -25,18 +66,22 @@ public class Basket
         return items.size();
     }
 
-    public boolean removeItem(Item item)
-    {
-        return items.remove(item);
-    }
-
     public void empty()
     {
         items.clear();
+        setChanged();
+        notifyObservers();
     }
 
-    public int getDiscountedValue()
+    public int getTotalValue()
     {
-        return -1;
+        int sum = 0;
+
+        for(Item item : items)
+        {
+            sum += item.getValue();
+        }
+
+        return sum;
     }
 }

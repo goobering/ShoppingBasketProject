@@ -27,18 +27,13 @@ public class TestCustomer
     }
 
     @Test
-    public void testAddLoyaltyCard()
-    {
-        LoyaltyCard loyaltyCard = new LoyaltyCard();
-        customer.setLoyaltyCard(loyaltyCard);
-        assertEquals(loyaltyCard, customer.getLoyaltyCard());
-    }
-
-    @Test
-    public void testAddBasket()
+    public void testSetBasket()
     {
         Basket basket = new Basket();
         customer.setBasket(basket);
+
+        //Setting the Customer's basket should also set the Basket's customer
         assertEquals(basket, customer.getBasket());
+        assertEquals(customer, basket.getCustomer());
     }
 }
